@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Faschings Drink & Buddy Finder</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: white;
+  background-image: url("Logo_Narrhalla.jpg");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 450px auto; /* Größe des Logos */
+  text-align: center;
+  padding: 20px;
+}
+
+/* Logo */
+#logo {
+  max-width: 350px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #b71c1c;
+}
+
+.question {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 10px 15px;        /* weniger Höhe */
+  margin: 22px auto;         /* mehr Abstand nach außen */
+  max-width: 750px;
+  border-radius: 15px;
+  font-size: 1.05em;         /* minimal kleiner */
+  border: 2px solid black;
+}
+
+label {
+  margin: 0 10px;
+}
+
+button {
+  padding: 12px 30px;
+  font-size: 1.2em;
+  background: #bf360c;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #bf360c;
+}
+
+#vereinsname {
+  font-family: 'Playfair Display', serif;  /* elegante, festliche Schrift */
+  color: #bf360c;                          /* warme Faschingsfarbe */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3); /* leichte Tiefe */
+  font-size: 2em;
+  margin: 15px 0 25px 0;
+  letter-spacing: 1px;
+}
+
+
+/* POPUP */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+  background: #e8f5e9;
+  margin: 10% auto;
+  padding: 25px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 600px;
+  font-size: 1.4em;
+}
+
+.close {
+  float: right;
+  font-size: 30px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Vereinslogo -->
+<h2 id="vereinsname">Narrhalla Pfeffenhausen e.V.</h2>
+
+<h1>🎭 Faschings Drink & Buddy Finder 🎉</h1>
+
+<form id="survey" onsubmit="return auswerten();">
+
+<div class="question">
+<p>Wie ernst meinst du es heute mit dem Trinken?</p>
+<label><input type="radio" name="q1" value="3"> Vollgas</label>
+<label><input type="radio" name="q1" value="1"> Gemütlich</label>
+<label><input type="radio" name="q1" value="0"> Nur zum Anstoßen</label>
+</div>
+
+<div class="question">
+<p>Wo findest du dich später wahrscheinlich wieder?</p>
+<label><input type="radio" name="q2" value="2"> Bar</label>
+<label><input type="radio" name="q2" value="1"> Tanzfläche</label>
+<label><input type="radio" name="q2" value="0"> Am Tisch</label>
+</div>
+
+<div class="question">
+<p>Wie stehst du zu Kurzen?</p>
+<label><input type="radio" name="q3" value="3"> Liebe sie</label>
+<label><input type="radio" name="q3" value="1"> Ab und zu</label>
+<label><input type="radio" name="q3" value="0"> Nein danke</label>
+</div>
+
+<div class="question">
+<p>Bist du eher der „Ein Schluck reicht“-Typ?</p>
+<label><input type="radio" name="q4" value="0"> Ja</label>
+<label><input type="radio" name="q4" value="1"> Nein</label>
+</div>
+
+<div class="question">
+<p>Hast du es schon einmal bereut, zu viel getrunken zu haben?</p>
+<label><input type="radio" name="q5" value="0"> Ja</label>
+<label><input type="radio" name="q5" value="1"> Nein</label>
+</div>
+
+<div class="question">
+<p>Gönnst du dir manchmal eine große Portion, um dich königlich zu fühlen?</p>
+<label><input type="radio" name="q6" value="1"> Ja</label>
+<label><input type="radio" name="q6" value="0"> Nein</label>
+</div>
+
+<div class="question">
+<p>Hast du Angst vor geschminkten Kasperl?</p>
+<label><input type="radio" name="q7" value="1"> Nein</label>
+<label><input type="radio" name="q7" value="0"> Ja</label>
+</div>
+
+<button type="submit">🎉 Ergebnis anzeigen</button>
+</form>
+
+<!-- POPUP -->
+<div id="popup" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="schliessen()">&times;</span>
+    <div id="popupText"></div>
+  </div>
+</div>
+
+<!-- Konfetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<script>
+function auswerten() {
+
+  konfettiElegant();
+
+  let punkte = 0;
+  const daten = new FormData(document.getElementById("survey"));
+  for (let value of daten.values()) {
+    punkte += parseInt(value);
+  }
+
+  let text = "";
+
+if (punkte >= 9) {
+  text = "🤡🥃 <b>KASPERL</b><br>" +
+         "Kurze ohne Ende – komplette Eskalation!<br><br>" +
+         "👉 <b>Getränke-Tipp:</b> Kurze, Kurze und noch mehr Kurze 🍻<br><br>" +
+         "Unsere bezaubernden Kasperl-Girls geben euch bestimmt einen Tipp – " +
+         "wenn ihr sie nett fragt und ein Lächeln dalasst 😉";
+} else if (punkte >= 7) {
+  text = "🍺 <b>MÄNNERBALLETT</b><br>" +
+         "Vollsuff an der Bar – hier wird nicht gekleckert!<br><br>" +
+         "👉 <b>Getränke-Tipp:</b> Ein schönes Boot mit den Buben – Prost zusammen! 🍺<br><br>" +
+         "Gemeinsam anstoßen, lachen und den Abend feiern – " +
+         "alleine trinken kann schließlich jeder 😎";
+} else if (punkte >= 5) {
+  text = "🍹 <b>HOFDAMEN</b><br>" +
+         "Stilvoll unterwegs, offen für gute Gespräche und neue Bekanntschaften.<br><br>" +
+         "👉 <b>Getränke-Tipp:</b> Gebt den Mädels ein Getränk an der Bar aus 😉<br><br>" +
+         "Ein nettes Gespräch, ein ehrliches Kompliment – " +
+         "und der Abend nimmt ganz von selbst Fahrt auf ✨";
+} else {
+  text = "🥂 <b>SHOW / GARDE</b><br>" +
+         "Entspannt, sympathisch und mit guter Laune dabei.<br><br>" +
+         "👉 <b>Extra-Tipp:</b> Auch ohne Alkohol kann man an der Bar gute Gespräche führen 💬<br><br>" +
+         "Manchmal reicht ein Lächeln, ein offenes Ohr und gute Stimmung – " +
+         "der Rest ergibt sich von ganz alleine 😊";
+}
+
+
+
+
+  document.getElementById("popupText").innerHTML = text;
+  document.getElementById("popup").style.display = "block";
+  return false;
+}
+
+function konfettiElegant() {
+  confetti({
+    particleCount: 720,      // deutlich mehr Konfetti
+    spread: 260,             // große Streuung
+    startVelocity: 55,       // kräftiger Knall
+    origin: { x: 0.5, y: 0.6 }
+  });
+
+  // kleiner Nachschub für „Wow“-Effekt
+  setTimeout(() => {
+    confetti({
+      particleCount: 180,
+      spread: 220,
+      startVelocity: 35,
+      origin: { x: 0.5, y: 0.6 }
+    });
+  }, 350);
+}
+
+
+function schliessen() {
+  document.getElementById("popup").style.display = "none";
+}
+</script>
+
+</body>
+</html>
